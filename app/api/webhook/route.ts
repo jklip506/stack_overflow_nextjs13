@@ -62,20 +62,22 @@ export async function POST(req: Request) {
         const { email_addresses, id, image_url, username, first_name, last_name } = evt.data;
 
         // create a new user in your mongo database
-        await createUser({
+        const mongoUser = await createUser({
             clerkId: id,
             name: `${first_name} ${last_name ? `${last_name}` : ''}`,
             username: username!,
             email: email_addresses[0].email_address,
             picture: image_url
         })
+
+        return NextResponse.json({ message: 'User created', user: mongoUser });
     }
 
     if (eventType === 'user.updated') {
         const { email_addresses, id, image_url, username, first_name, last_name } = evt.data;
 
         // create a new user in your mongo database
-        await updateUser({
+        const mongoUser = await updateUser({
             clerkId: id,
             updateData: {
                 name: `${first_name} ${last_name ? `${last_name}` : ''}`,
@@ -85,6 +87,8 @@ export async function POST(req: Request) {
             },
             path: `/profile/${id}`
         })
+
+        return NextResponse.json({ message: 'User updated', user: mongoUser });
     }
 
     if (eventType === 'user.deleted') {
