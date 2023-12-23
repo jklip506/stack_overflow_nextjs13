@@ -34,6 +34,6 @@ const TagSchema: Schema = new Schema({
     }
 });
 
-const Tag = mongoose.model<ITag>('Tag', TagSchema);
+const Tag = mongoose.models.Tag || mongoose.model<ITag>('Tag', TagSchema);
 
 export default Tag;

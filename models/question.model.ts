@@ -54,6 +54,6 @@ const QuestionSchema: Schema = new Schema({
     }
 });
 
-const Question = mongoose.model<IQuestion>('Question', QuestionSchema);
+const Question = mongoose.models.Question || mongoose.model<IQuestion>('Question', QuestionSchema);
 
 export default Question;
