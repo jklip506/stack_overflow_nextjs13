@@ -63,15 +63,16 @@ export async function POST(req: Request) {
         first_name = first_name || 'First Name';
         last_name = last_name || 'Last Name';
 
-        console.log('user created', email_addresses[0].email_address, id, image_url, username, first_name, last_name);
         // create a new user in your mongo database
-        const mongoUser = await createUser({
+        const mongoUser = {
             clerkId: id,
             name: `${first_name} ${last_name}`,
             username: username!,
             email: email_addresses[0].email_address,
             picture: image_url
-        })
+        }
+
+        console.log(mongoUser);
 
         return NextResponse.json({ message: 'User created', user: mongoUser });
     }
