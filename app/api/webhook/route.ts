@@ -56,14 +56,18 @@ export async function POST(req: Request) {
     const eventType = evt.type;
 
     if (eventType === 'user.created') {
+        const { email_addresses, id, image_url, username } = evt.data;
+        let { first_name, last_name } = evt.data;
 
-        const { email_addresses, id, image_url, username, first_name, last_name } = evt.data;
+        // If first_name and last_name are null, set them to default values
+        first_name = first_name || 'First Name';
+        last_name = last_name || 'Last Name';
 
         console.log('user created', email_addresses[0].email_address, id, image_url, username, first_name, last_name);
         // create a new user in your mongo database
         const mongoUser = await createUser({
             clerkId: id,
-            name: `${first_name} ${last_name ? `${last_name}` : ''}`,
+            name: `${first_name} ${last_name}`,
             username: username!,
             email: email_addresses[0].email_address,
             picture: image_url
@@ -73,12 +77,7 @@ export async function POST(req: Request) {
     }
 
     if (eventType === 'user.updated') {
-        const { email_addresses, id, image_url, username } = evt.data;
-        let { first_name, last_name } = evt.data;
-
-        // If first_name and last_name are null, set them to default values
-        first_name = first_name || '';
-        last_name = last_name || '';
+        const { email_addresses, id, image_url, username, first_name, last_name } = evt.data;
 
         console.log('user updated', email_addresses, id, image_url, username, first_name, last_name);
 
