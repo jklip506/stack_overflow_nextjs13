@@ -73,7 +73,12 @@ export async function POST(req: Request) {
     }
 
     if (eventType === 'user.updated') {
-        const { email_addresses, id, image_url, username, first_name, last_name } = evt.data;
+        const { email_addresses, id, image_url, username } = evt.data;
+        let { first_name, last_name } = evt.data;
+
+        // If first_name and last_name are null, set them to default values
+        first_name = first_name || '';
+        last_name = last_name || '';
 
         console.log('user updated', email_addresses, id, image_url, username, first_name, last_name);
 
