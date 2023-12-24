@@ -26,8 +26,13 @@ export async function createUser(userData: CreateUserParams) {
     try {
         await connectToDatabase();
 
+        const { clerkId, name, username, email, picture } = userData;
         const newUser = await User.create({
-            userData
+            clerkId,
+            name,
+            username,
+            email,
+            picture
         });
 
         return newUser;
