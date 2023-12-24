@@ -18,8 +18,6 @@ export default authMiddleware({
         '/api/chatgpt',
         '/api/webhook',
     ],
-
-    debug: true,
 });
 
 export const config = {
