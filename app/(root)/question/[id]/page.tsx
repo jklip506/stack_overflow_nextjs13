@@ -3,6 +3,7 @@ import AllAnswers from "@/components/shared/answers/AllAnswers";
 import Metric from "@/components/shared/metric/Metric";
 import ParseHTML from "@/components/shared/parseHtml/ParseHTML";
 import RenderTag from "@/components/shared/tag/RenderTag";
+import Votes from "@/components/shared/votes/Votes";
 import { getAllAnswers } from "@/lib/actions/answer.action";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getUserById } from "@/lib/actions/user.action";
@@ -41,7 +42,18 @@ const Page = async ({ params }: { params: { id: string } }) => {
               {question.author.name}
             </p>
           </Link>
-          <div className="flex justify-end">VOTING</div>
+          <div className="flex justify-end">
+            <Votes
+              type="question"
+              itemId={JSON.stringify(question._id)}
+              userId={JSON.stringify(mongoUser._id)}
+              upvotes={question.upvotes.length}
+              hasUpvoted={question.upvotes.includes(mongoUser._id)}
+              downvotes={question.downvotes.length}
+              hasDownvoted={question.downvotes.includes(mongoUser._id)}
+              hasSaved={mongoUser?.savedQuestions.includes(question._id)}
+            />
+          </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
           {question.title}
@@ -88,7 +100,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
       <AllAnswers
         questionId={question._id}
-        userId={JSON.stringify(mongoUser._id)}
+        userId={JSON.stringify(mongoUser?._id)}
         totalAnswers={question.answers.length}
       />
 
