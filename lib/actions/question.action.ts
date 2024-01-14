@@ -4,7 +4,7 @@
 import Tag from "@/models/tag.model";
 import { connectToDatabase } from "../mongoose";
 import Question from "@/models/question.model";
-import { CreateQuestionParams, GetQuestionByIdParams, GetQuestionsParams } from "./shared.types";
+import { CreateQuestionParams, GetQuestionByIdParams, GetQuestionsParams, QuestionVoteParams } from "./shared.types";
 import User from "@/models/user.model";
 import { revalidatePath } from "next/cache";
 
@@ -84,6 +84,64 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
 
     } catch (error) {
         console.error("Error getting question by id:", error);
+        throw error;
+    }
+}
+
+export async function upvoteQuestion(params: QuestionVoteParams) {
+    try {
+
+        await connectToDatabase();
+        const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
+
+        let update;
+        if (hasupVoted) {
+            update = { $pull: { upvotes: userId } };
+        } else if (hasdownVoted) {
+            update = { $pull: { downvotes: userId }, $push: { upvotes: userId } };
+        } else {
+            update = { $addToSet: { upvotes: userId } };
+        }
+
+        const upvote = await Question.findByIdAndUpdate(questionId, update, { new: true });
+
+        if (!upvote) {
+            throw new Error("Question not found");
+        }
+
+        revalidatePath(path);
+
+    } catch (error) {
+        console.error("Error upvoting question:", error);
+        throw error;
+    }
+}
+
+export async function downvoteQuestion(params: QuestionVoteParams) {
+    try {
+
+        await connectToDatabase();
+        const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
+
+        let update;
+        if (hasdownVoted) {
+            update = { $pull: { downvotes: userId } };
+        } else if (hasupVoted) {
+            update = { $pull: { upvotes: userId }, $push: { downvotes: userId } };
+        } else {
+            update = { $addToSet: { downvotes: userId } };
+        }
+
+        const downvote = await Question.findByIdAndUpdate(questionId, update, { new: true });
+
+        if (!downvote) {
+            throw new Error("Question not found");
+        }
+
+        revalidatePath(path);
+
+    } catch (error) {
+        console.error("Error downvoting question:", error);
         throw error;
     }
 }
