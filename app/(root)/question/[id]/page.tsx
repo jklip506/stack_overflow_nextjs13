@@ -1,12 +1,10 @@
 import Answer from "@/components/forms/Answer";
 import AllAnswers from "@/components/shared/answers/AllAnswers";
 import Metric from "@/components/shared/metric/Metric";
-import ParseHTML from "@/components/shared/parseHtml/ParseHTML";
 import RenderTag from "@/components/shared/tag/RenderTag";
 import Votes from "@/components/shared/votes/Votes";
-import { getAllAnswers } from "@/lib/actions/answer.action";
 import { getQuestionById } from "@/lib/actions/question.action";
-import { getUserById } from "@/lib/actions/user.action";
+import { getUserById, toggleSaveQuestion } from "@/lib/actions/user.action";
 import { getTimestamp, formatNumber } from "@/lib/utils";
 import { auth } from "@clerk/nextjs";
 import Image from "next/image";
@@ -21,10 +19,12 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
   if (clerkId) {
     mongoUser = await getUserById({ userId: clerkId });
+    console.log(mongoUser?.savedQuestions);
+    console.log(question._id);
   }
 
   return (
-    <>
+    <div>
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
           <Link
@@ -86,7 +86,8 @@ const Page = async ({ params }: { params: { id: string } }) => {
         />
       </div>
 
-      <ParseHTML data={question.content} />
+      {/* <ParseHTML data={question.content} /> */}
+
       <div className="mt-8 flex flex-wrap gap-2">
         {question.tags.map((tag: any) => (
           <RenderTag
@@ -109,7 +110,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
         questionId={JSON.stringify(question._id)}
         authorId={JSON.stringify(mongoUser._id)}
       />
-    </>
+    </div>
   );
 };
 

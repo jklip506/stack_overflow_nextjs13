@@ -2,7 +2,7 @@
 
 import User from "@/models/user.model";
 import { connectToDatabase } from "../mongoose";
-import { CreateUserParams, DeleteUserParams, GetAllUsersParams, UpdateUserParams } from "./shared.types";
+import { CreateUserParams, DeleteUserParams, GetAllUsersParams, ToggleSaveQuestionParams, UpdateUserParams } from "./shared.types";
 import { revalidatePath } from "next/cache";
 import Question from "@/models/question.model";
 
@@ -104,5 +104,27 @@ export async function deleteUser(userData: DeleteUserParams) {
     } catch (error) {
         console.log(error);
         throw error;
+    }
+}
+
+export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
+    try {
+        await connectToDatabase();
+        const { userId, questionId, hasSaved, path } = params;
+
+        // check if questionId is in savedQuestions array
+        let toggle;
+        if (hasSaved) {
+            toggle = { $pull: { savedQuestions: questionId } };
+        } else {
+            toggle = { $addToSet: { savedQuestions: questionId } };
+        }
+
+        await User.findByIdAndUpdate(userId, toggle, { new: true });
+
+        revalidatePath(path);
+
+    } catch (error) {
+
     }
 }
