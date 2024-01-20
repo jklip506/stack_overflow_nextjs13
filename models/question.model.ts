@@ -1,13 +1,19 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-interface IQuestion extends Document {
+export interface IQuestion extends Document {
     title: string;
     content: string;
-    tags: Schema.Types.ObjectId[];
+    tags: { _id: string, name: string }[];
     views: number;
-    upvotes: Schema.Types.ObjectId[];
+    upvotes: string[];
     downvotes: Schema.Types.ObjectId[];
-    author: Schema.Types.ObjectId;
+    author: {
+        _id: string;
+        clerkId: string;
+        name: string;
+        picture: string;
+
+    };
     answers: Schema.Types.ObjectId[];
     createdAt: Date;
 }

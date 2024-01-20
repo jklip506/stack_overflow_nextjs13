@@ -4,14 +4,15 @@ import Metric from "@/components/shared/metric/Metric";
 import RenderTag from "@/components/shared/tag/RenderTag";
 import Votes from "@/components/shared/votes/Votes";
 import { getQuestionById } from "@/lib/actions/question.action";
-import { getUserById, toggleSaveQuestion } from "@/lib/actions/user.action";
+import { getUserById } from "@/lib/actions/user.action";
 import { getTimestamp, formatNumber } from "@/lib/utils";
+import { URLProps } from "@/types";
 import { auth } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Page = async ({ params }: { params: { id: string } }) => {
+const Page = async ({ params, searchParams }: URLProps) => {
   const { question } = await getQuestionById({ questionId: params.id });
   const { userId: clerkId } = auth();
 
@@ -19,8 +20,6 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
   if (clerkId) {
     mongoUser = await getUserById({ userId: clerkId });
-    console.log(mongoUser?.savedQuestions);
-    console.log(question._id);
   }
 
   return (
