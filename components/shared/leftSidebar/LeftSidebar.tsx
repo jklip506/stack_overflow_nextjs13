@@ -5,11 +5,13 @@ import React from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { SignedOut } from "@clerk/nextjs";
+import { SignedOut, useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 
 const LeftSidebar = () => {
   const pathname = usePathname();
+  const { userId } = useAuth();
+
   return (
     <section className="background-light900_dark200 light-border sticky left-0 top-0 flex h-screen flex-col justify-between overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]">
       <div className="flex flex-1 flex-col gap-6">
@@ -17,6 +19,14 @@ const LeftSidebar = () => {
           const isActive =
             (pathname.includes(link.route) && link.route.length > 1) ||
             pathname === link.route;
+
+          if (link.route === "/profile") {
+            if (userId) {
+              link.route = `${link.route}/${userId}`; // Use userId.id instead of userId
+            } else {
+              return null;
+            }
+          }
           return (
             <Link
               href={link.route}

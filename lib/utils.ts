@@ -46,4 +46,11 @@ export const formatNumber = (num: number): string => {
   }
 };
 
+export const formatTimestampToMonthAndYear = (timestamp: Date): string => {
+  const date = new Date(timestamp);
+  const month = date.toLocaleString('default', { month: 'long' });
+  const year = date.getFullYear();
+  return `${month} ${year}`;
+}
+
 
